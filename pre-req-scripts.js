@@ -117,12 +117,12 @@ postman.setGlobalVariable(
     utils.expectSubResponse = (name, index, expected, callback) => {
       pm.expect(name, "expectSubResponse name argument").to.exist;
       pm.expect(utils.responseSubType, "responseSubType").to.exist;
-      var paramName;
-      if (index === undefined) {
-        paramName = `${utils.responseSubType}.${name}`;
-      } else {
-        let values = _.get(utils.soapBody, utils.responseSubType);
-        pm.expect(values, utils.responseSubType).to.be.an("array");
+      var paramName = `${utils.responseSubType}.${name}`;
+      let values = _.get(utils.soapBody, utils.responseSubType);
+      if (values instanceof Array) {
+        if (index === undefined) {
+          index = 1;
+        }
         pm.expect(index, "index").to.be.at.least(1);
         pm.expect(index, "index").to.be.at.most(values.length);
         paramName = `${utils.responseSubType}[${index - 1}].${name}`;

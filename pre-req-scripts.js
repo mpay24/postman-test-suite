@@ -11,6 +11,11 @@ postman.setGlobalVariable(
 
     //GENERAL
     utils.parseSOAPResponse = (resType, resSubType) => {
+      utils.responseType =
+        resType === undefined ? `${utils.expNs}:Fault` : resType;
+      if (resSubType !== undefined) {
+        utils.responseSubType = utils.responseType + "." + resSubType;
+      }
       pm.test("Parse SOAP response", () => {
         let content = postman.getResponseHeader("Content-Type");
         if (resType === undefined && utils.expStatus != 500) {
@@ -26,14 +31,11 @@ postman.setGlobalVariable(
         pm.expect(soapEnvelope, `${utils.expNs}:Envelope`).to.exist;
         utils.soapBody = soapEnvelope[`${utils.expNs}:Body`];
         pm.expect(utils.soapBody, `${utils.expNs}::Body`).to.exist;
-        utils.responseType =
-          resType === undefined ? `${utils.expNs}:Fault` : resType;
         let value = _.get(utils.soapBody, utils.responseType);
         pm.expect(value, utils.responseType).to.exist;
         if (resSubType !== undefined) {
-          utils.responseSubType = utils.responseType + "." + resSubType;
-          let value = _.get(utils.soapBody, utils.responseSubType);
-          pm.expect(value, utils.responseSubType).to.exist;
+          let subValue = _.get(utils.soapBody, utils.responseSubType);
+          pm.expect(subValue, utils.responseSubType).to.exist;
         }
       });
     };

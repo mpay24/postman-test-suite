@@ -39,9 +39,7 @@ postman.setGlobalVariable(
         }
       });
     };
-    utils.expect = (name, expected, callback) => {
-      pm.expect(name, "expect: name argument").to.exist;
-      let value = _.get(utils.soapBody, name);
+    utils.expectValue = (name, value, expected, callback) => {
       if (expected instanceof RegExp) {
         pm.test(`${name} matches: ${expected}`, () => {
           pm.expect(value).to.match(expected);
@@ -58,6 +56,11 @@ postman.setGlobalVariable(
       if (typeof callback === "function") {
         callback(value);
       }
+    };
+    utils.expect = (name, expected, callback) => {
+      pm.expect(name, "expect: name argument").to.exist;
+      let value = _.get(utils.soapBody, name);
+      utils.expectValue(name, value, expected, callback);
     };
 
     //RESPONSE
@@ -152,27 +155,22 @@ postman.setGlobalVariable(
     };
 
     //PARAMETER
-    utils.getParameter = (name, callback) => {
+    utils.expectParameter = (name, expected) => {
       pm.expect(name, "getParameter name argument").to.exist;
       pm.expect(utils.responseType, "responseType").to.exist;
-      let valuesName = `${utils.responseType}.parameter`;
-      let values = _.get(utils.soapBody, valuesName);
-      pm.expect(values, valuesName).to.be.an("array");
-      var index;
-      let param = values.find((el, ix) => {
-        index = ix;
-        return el.name === name;
-      });
-      pm.expect(param, valuesName).to.exist;
-      pm.expect(param.value, valuesName).to.exist;
-      if (typeof callback === "function") {
-        callback(`${utils.responseType}.parameter[${index}]`);
+      var value;
+      var valueName = `${name} parameter`;
+      let parameters = _.get(utils.soapBody, `${utils.responseType}.parameter`);
+      if (parameters !== undefined) {
+        let index = _.findIndex(parameters, "name", name);
+        if (index != -1) {
+          value = parameters[index].value;
+          valueName = `${name} parameter (${
+            utils.responseType
+          }.parameter[${index}].value)`;
+        }
       }
-    };
-    utils.expectParameter = (name, expected) => {
-      utils.getParameter(name, valueName => {
-        utils.expect(`${valueName}.value`, expected);
-      });
+      utils.expectValue(valueName, value, expected);
     };
 
     //ERRORS

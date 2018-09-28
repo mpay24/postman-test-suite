@@ -155,14 +155,14 @@ postman.setGlobalVariable(
     };
 
     //PARAMETER
-    utils.expectParameter = (name, expected) => {
+    utils.expectParameter = (name, expected, callback) => {
       pm.expect(name, "getParameter name argument").to.exist;
       pm.expect(utils.responseType, "responseType").to.exist;
       var value;
       var valueName = `${name} parameter`;
       let parameters = _.get(utils.soapBody, `${utils.responseType}.parameter`);
       if (parameters !== undefined) {
-        let index = _.findIndex(parameters, "name", name);
+        let index = _.findIndex(parameters, { name: name });
         if (index != -1) {
           value = parameters[index].value;
           valueName = `${name} parameter (${
@@ -170,7 +170,7 @@ postman.setGlobalVariable(
           }.parameter[${index}].value)`;
         }
       }
-      utils.expectValue(valueName, value, expected);
+      utils.expectValue(valueName, value, expected, callback);
     };
 
     //ERRORS

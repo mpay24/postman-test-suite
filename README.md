@@ -75,7 +75,7 @@ Variables set after calling parseSOAPResponse:
 
 `expectFaultCode(expected)`: check if the fault code is `<expected>`
 
-`expectFaultstring(expected)`: check if the fault string is `<expected>`
+`expectFaultString(expected)`: check if the fault string is `<expected>`
 
 `expectErrNo(number)`: check if the error is `<number>`
 

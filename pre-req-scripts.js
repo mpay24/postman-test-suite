@@ -17,14 +17,9 @@ postman.setGlobalVariable(
         utils.responseSubType = utils.responseType + "." + resSubType;
       }
       pm.test("Parse SOAP response", () => {
-        let content = postman.getResponseHeader("Content-Type");
         if (resType === undefined && utils.expStatus != 500) {
           utils.expStatus = 500;
         }
-        pm.response.to.have.status(utils.expStatus, "Invalid http status");
-        pm.response.to.have.header("Content-Type");
-        pm.expect(content, "Missing Content-Type header").to.exist;
-        pm.expect(content, "Wrong Content-Type").to.contain(utils.expContent);
         let responseJSON = xml2Json(pm.response.text());
         pm.expect(responseJSON, "Cannot parse the response to JSON").to.exist;
         let soapEnvelope = responseJSON[`${utils.expNs}:Envelope`];
@@ -37,6 +32,10 @@ postman.setGlobalVariable(
           let subValue = _.get(utils.soapBody, utils.responseSubType);
           pm.expect(subValue, utils.responseSubType).to.exist;
         }
+        let content = postman.getResponseHeader("Content-Type");
+        pm.expect(content, "Missing Content-Type header").to.exist;
+        pm.expect(content, "Wrong Content-Type").to.contain(utils.expContent);
+        pm.response.to.have.status(utils.expStatus, "Invalid http status");
       });
     };
     utils.expectValue = (name, value, expected, callback) => {

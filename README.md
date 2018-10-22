@@ -1,6 +1,6 @@
 # postman-test-suite
 
-## Global pre-reqquest scripts
+## Global pre-request scripts
 
 References:
 
@@ -32,11 +32,14 @@ Variables set after calling parseSOAPResponse:
 
 `parseSOAPResponse(resType, subResType)`: defines the global variables for the other functions, expect `<resType>` response with `<subResType>` sub-response
 
+`expectValue(name, value, expected, callback)`: check if the `<value>` named `<name>` is `<expected>` then call `<callback>` with the value
+
 `expect(name, expected, callback)`: check if field `<name>` exists in the soap body and is `<expected>` then call `<callback>` with the value
 
 ### RESPONSE
 
 `expectNoResponse(name)`: check that the response field `<name>` does not exist
+
 `expectResponse(name, expected, callback)`: check if response field `<name>` exists containing `<expected>` and call `<callback>` with the value
 
 `expectStatus(expected)`: check if the status field is `<expected>`

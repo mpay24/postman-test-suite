@@ -21,7 +21,9 @@ Default variables which could be set before calling parseSOAPResponse:
 
 `utils.expStatus`: expected response http status code (default: 200)
 
-`utils.expContent`: expected response content type: (default: text/xml)
+`utils.expSOAPContent`: expected SOAP response content type: (default: text/xml)
+
+`utils.expHTTPContent`: expected HTTP response content type: (default: text/plain)
 
 Variables set after calling parseSOAPResponse:
 `utils.responseType` - contains the type (string) of the response
@@ -30,7 +32,13 @@ Variables set after calling parseSOAPResponse:
 
 ### GENERAL
 
+`urlDecode(value)`: url-decode `<value>`
+
+`decodeFormURLEncoded(text)`: Decode `form-www-urlencoded` string `<text>` into a JSON object
+
 `parseSOAPResponse(resType, subResType)`: defines the global variables for the other functions, expect `<resType>` response with `<subResType>` sub-response
+
+`parseHTTPResponse(resType, subResType)`: defines the global variables for the other functions, expect `<resType>` response with `<subResType>` sub-response
 
 `expectValue(name, value, expected, callback)`: check if the `<value>` named `<name>` is `<expected>` then call `<callback>` with the value
 

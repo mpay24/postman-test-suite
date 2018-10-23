@@ -25,7 +25,10 @@ Default variables which could be set before calling parseSOAPResponse:
 
 `utils.expHTTPContent`: expected HTTP response content type: (default: text/plain)
 
-Variables set after calling parseSOAPResponse:
+Variables set after calling parseHTTPResponse or parseSOAPResponse:
+
+`utils.response` - contains the parsed response JSON
+
 `utils.responseType` - contains the type (string) of the response
 
 `utils.responseSubType` - contains the sub-type (string) of the response

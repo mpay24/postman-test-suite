@@ -58,7 +58,18 @@ postman.setGlobalVariable(
       pm.test("Parse HTTP response", () => {
         utils.expContent = "text/plain";
         utils.responseType = "HTTP";
-        utils.response = utils.decodeFormURLEncoded(pm.response.text());
+        let response = _.trim(pm.response.text());
+        if (response.includes("\n")) {
+          var lines = response.split("\n").map(utils.decodeFormURLEncoded);
+          lines = lines.map((obj, idx) =>
+            _.mapKeys(obj, (value, key) => _.trim(key, "_" + idx))
+          );
+          utils.response = lines[0];
+          utils.response.lines = _.drop(lines, 1);
+          utils.responseSubType = "lines";
+        } else {
+          utils.response = utils.decodeFormURLEncoded(pm.response.text());
+        }
         let content = postman.getResponseHeader("Content-Type");
         pm.expect(content, "Missing Content-Type header").to.exist;
         pm.expect(content, "Wrong Content-Type").to.contain(utils.expContent);

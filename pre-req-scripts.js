@@ -22,6 +22,10 @@ postman.setGlobalVariable(
         .map(values => values.map(utils.urlDecode));
       return _.fromPairs(result);
     };
+    utils.paramName = name => {
+      if (utils.responseType === "HTTP") return name.toUpperCase();
+      return `${utils.responseType}.${name}`;
+    };
     utils.parseSOAPResponse = (resType, resSubType) => {
       utils.responseType =
         resType === undefined ? `${utils.expNs}:Fault` : resType;
@@ -89,18 +93,14 @@ postman.setGlobalVariable(
     utils.expectNoResponse = name => {
       pm.expect(name, "expectResponse name argument").to.exist;
       pm.expect(utils.responseType, "responseType").to.exist;
-      let paramName = `${utils.responseType}.${name}`;
+      let paramName = utils.paramName(name);
       let value = _.get(utils.response, paramName);
       pm.test(`${paramName} does not exist`, () => {
         pm.expect(value).to.not.exist;
       });
     };
     utils.expectResponse = (name, expected, callback) => {
-      let expectName =
-        utils.responseType === "HTTP"
-          ? name.toUpperCase()
-          : `${utils.responseType}.${name}`;
-      utils.expect(expectName, expected, callback);
+      utils.expect(utils.paramName(name), expected, callback);
     };
     utils.expectStatus = expected => {
       utils.expectResponse("status", expected);
@@ -219,9 +219,8 @@ postman.setGlobalVariable(
       pm.expect(variable, "saveResponseParameter variable argument").to.exist;
       pm.expect(utils.responseType, "responseType").to.exist;
       postman.clearEnvironmentVariable(name);
-      pm.test(`Saving ${name} as ${variable}`, () => {
-        let paramName = `${utils.responseType}.${name}`;
-        let value = _.get(utils.response, paramName);
+      pm.test(`Saving ${utils.paramName(name)} as ${variable}`, () => {
+        let value = _.get(utils.response, utils.paramName(name));
         pm.expect(value).to.exist;
         postman.setEnvironmentVariable(variable, value);
       });

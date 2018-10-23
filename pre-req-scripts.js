@@ -67,6 +67,14 @@ postman.setGlobalVariable(
           utils.response = lines[0];
           utils.response.lines = _.drop(lines, 1);
           utils.responseSubType = "lines";
+          let expectedLen = utils.response.lines.length;
+          let sum = Number(utils.response.SUM);
+          let all = Number(utils.response.ALL);
+          if (sum !== undefined) {
+            pm.expect(sum, "Wrong SUM parameter").to.equal(expectedLen);
+          } else {
+            pm.expect(all, "Wrong ALL parameter").to.equal(expectedLen);
+          }
         } else {
           utils.response = utils.decodeFormURLEncoded(pm.response.text());
         }

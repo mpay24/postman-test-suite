@@ -112,13 +112,15 @@ postman.setGlobalVariable(
       utils.expectResponse("mpayTID");
     };
     utils.expectLocation = substring => {
-      utils.expectResponse("location", undefined, locationValue => {
-        if (substring !== undefined) {
+      if (substring === undefined) {
+        utils.expectResponse("location");
+      } else {
+        utils.expectResponse("location", undefined, locationValue => {
           pm.test(`Location contains: ${substring}`, () => {
             pm.expect(locationValue).to.include(substring);
           });
-        }
-      });
+        });
+      }
     };
     utils.expectAll = number => {
       utils.expectResponse("all", String(number));

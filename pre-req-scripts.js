@@ -128,21 +128,17 @@ postman.setGlobalVariable(
     utils.expectAllAbove = number => {
       pm.expect(number, "expectAllAbove number argument").to.exist;
       utils.expectResponse("all", undefined, allValue => {
-        if (number !== undefined) {
-          pm.test(`${utils.responseType}.all is bigger than ${number}`, () => {
-            pm.expect(Number(allValue)).to.be.above(Number(number));
-          });
-        }
+        pm.test(`${utils.paramName("all")} is bigger than ${number}`, () => {
+          pm.expect(Number(allValue)).to.be.above(Number(number));
+        });
       });
     };
     utils.expectAllBelow = number => {
       pm.expect(number, "expectAllBelow number argument").to.exist;
       utils.expectResponse("all", undefined, allValue => {
-        if (number !== undefined) {
-          pm.test(`${utils.responseType}.all is smaller than ${number}`, () => {
-            pm.expect(Number(allValue)).to.be.below(Number(number));
-          });
-        }
+        pm.test(`${utils.paramName("all")} is smaller than ${number}`, () => {
+          pm.expect(Number(allValue)).to.be.below(Number(number));
+        });
       });
     };
 

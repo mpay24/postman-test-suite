@@ -34,7 +34,7 @@ Variables set after calling parseSOAPResponse:
 
 `urlDecode(value)`: url-decode `<value>`
 
-`decodeFormURLEncoded(text)`: Decode `form-www-urlencoded` string `<text>` into a JSON object
+`decodeFormURLEncoded(text)`: Decode `www-form-urlencoded` string `<text>` into a JSON object
 
 `parseSOAPResponse(resType, subResType)`: defines the global variables for the other functions, expect `<resType>` response with `<subResType>` sub-response
 

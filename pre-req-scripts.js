@@ -24,12 +24,12 @@ postman.setGlobalVariable(
         pm.expect(responseJSON, "Cannot parse the response to JSON").to.exist;
         let soapEnvelope = responseJSON[`${utils.expNs}:Envelope`];
         pm.expect(soapEnvelope, `${utils.expNs}:Envelope`).to.exist;
-        utils.soapBody = soapEnvelope[`${utils.expNs}:Body`];
-        pm.expect(utils.soapBody, `${utils.expNs}::Body`).to.exist;
-        let value = _.get(utils.soapBody, utils.responseType);
+        utils.response = soapEnvelope[`${utils.expNs}:Body`];
+        pm.expect(utils.response, `${utils.expNs}::Body`).to.exist;
+        let value = _.get(utils.response, utils.responseType);
         pm.expect(value, utils.responseType).to.exist;
         if (resSubType !== undefined) {
-          let subValue = _.get(utils.soapBody, utils.responseSubType);
+          let subValue = _.get(utils.response, utils.responseSubType);
           pm.expect(subValue, utils.responseSubType).to.exist;
         }
         let content = postman.getResponseHeader("Content-Type");
@@ -58,7 +58,7 @@ postman.setGlobalVariable(
     };
     utils.expect = (name, expected, callback) => {
       pm.expect(name, "expect: name argument").to.exist;
-      let value = _.get(utils.soapBody, name);
+      let value = _.get(utils.response, name);
       utils.expectValue(name, value, expected, callback);
     };
 
@@ -67,7 +67,7 @@ postman.setGlobalVariable(
       pm.expect(name, "expectResponse name argument").to.exist;
       pm.expect(utils.responseType, "responseType").to.exist;
       let paramName = `${utils.responseType}.${name}`;
-      let value = _.get(utils.soapBody, paramName);
+      let value = _.get(utils.response, paramName);
       pm.test(`${paramName} does not exist`, () => {
         pm.expect(value).to.not.exist;
       });
@@ -122,7 +122,7 @@ postman.setGlobalVariable(
       pm.expect(name, "expectSubResponse name argument").to.exist;
       pm.expect(utils.responseSubType, "responseSubType").to.exist;
       var paramName = `${utils.responseSubType}.${name}`;
-      let values = _.get(utils.soapBody, utils.responseSubType);
+      let values = _.get(utils.response, utils.responseSubType);
       if (values instanceof Array) {
         if (index === undefined) {
           index = 1;
@@ -136,7 +136,7 @@ postman.setGlobalVariable(
     utils.expectSubSortedBy = name => {
       pm.expect(name, "expectSubSortedBy name argument").to.exist;
       pm.test(`${utils.responseSubType} is sorted by ${name}`, () => {
-        let values = _.get(utils.soapBody, utils.responseSubType);
+        let values = _.get(utils.response, utils.responseSubType);
         let sorted = _.sortBy(values, name);
         let isEqual = _.isEqual(values, sorted);
         pm.expect(values, utils.responseSubType).to.be.an("array");
@@ -159,7 +159,7 @@ postman.setGlobalVariable(
       pm.expect(utils.responseType, "responseType").to.exist;
       var value;
       var valueName = `${name} parameter`;
-      let parameters = _.get(utils.soapBody, `${utils.responseType}.parameter`);
+      let parameters = _.get(utils.response, `${utils.responseType}.parameter`);
       if (parameters !== undefined) {
         let index = _.findIndex(parameters, { name: name });
         if (index != -1) {
@@ -194,7 +194,7 @@ postman.setGlobalVariable(
       postman.clearEnvironmentVariable(name);
       pm.test(`Saving ${name} as ${variable}`, () => {
         let paramName = `${utils.responseType}.${name}`;
-        let value = _.get(utils.soapBody, paramName);
+        let value = _.get(utils.response, paramName);
         pm.expect(value).to.exist;
         postman.setEnvironmentVariable(variable, value);
       });

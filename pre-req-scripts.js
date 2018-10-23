@@ -52,6 +52,7 @@ postman.setGlobalVariable(
     };
     utils.parseHTTPResponse = () => {
       pm.test("Parse HTTP response", () => {
+        utils.expContent = "text/plain";
         utils.responseType = "HTTP";
         utils.response = utils.decodeFormURLEncoded(pm.response.text());
         let content = postman.getResponseHeader("Content-Type");

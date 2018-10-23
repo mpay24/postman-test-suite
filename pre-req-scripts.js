@@ -68,11 +68,11 @@ postman.setGlobalVariable(
           utils.response.lines = _.drop(lines, 1);
           utils.responseSubType = "lines";
           let expectedLen = utils.response.lines.length;
-          let sum = Number(utils.response.SUM);
-          let all = Number(utils.response.ALL);
-          if (sum !== undefined) {
+          if (utils.response.SUM !== undefined) {
+            let sum = Number(utils.response.SUM);
             pm.expect(sum, "Wrong SUM parameter").to.equal(expectedLen);
           } else {
+            let all = Number(utils.response.ALL);
             pm.expect(all, "Wrong ALL parameter").to.equal(expectedLen);
           }
         } else {

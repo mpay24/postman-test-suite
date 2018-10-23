@@ -10,6 +10,18 @@ postman.setGlobalVariable(
     };
 
     //GENERAL
+    utils.urlDecode = value => {
+      let result = unescape(value);
+      return result.replace(/\+/g, " ");
+    };
+    utils.decodeFormURLEncoded = text => {
+      let form = text.replace(/^\s+|\s+$/g, "");
+      let result = form
+        .split("&")
+        .map(val => val.split("="))
+        .map(values => values.map(utils.urlDecode));
+      return _.fromPairs(result);
+    };
     utils.parseSOAPResponse = (resType, resSubType) => {
       utils.responseType =
         resType === undefined ? `${utils.expNs}:Fault` : resType;
@@ -32,6 +44,16 @@ postman.setGlobalVariable(
           let subValue = _.get(utils.response, utils.responseSubType);
           pm.expect(subValue, utils.responseSubType).to.exist;
         }
+        let content = postman.getResponseHeader("Content-Type");
+        pm.expect(content, "Missing Content-Type header").to.exist;
+        pm.expect(content, "Wrong Content-Type").to.contain(utils.expContent);
+        pm.response.to.have.status(utils.expStatus, "Invalid http status");
+      });
+    };
+    utils.parseHTTPResponse = () => {
+      pm.test("Parse HTTP response", () => {
+        utils.responseType = "HTTP";
+        utils.response = utils.decodeFormURLEncoded(pm.response.text());
         let content = postman.getResponseHeader("Content-Type");
         pm.expect(content, "Missing Content-Type header").to.exist;
         pm.expect(content, "Wrong Content-Type").to.contain(utils.expContent);
@@ -73,7 +95,11 @@ postman.setGlobalVariable(
       });
     };
     utils.expectResponse = (name, expected, callback) => {
-      utils.expect(`${utils.responseType}.${name}`, expected, callback);
+      let expectName =
+        utils.responseType === "HTTP"
+          ? name.toUpperCase()
+          : `${utils.responseType}.${name}`;
+      utils.expect(expectName, expected, callback);
     };
     utils.expectStatus = expected => {
       utils.expectResponse("status", expected);

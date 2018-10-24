@@ -203,18 +203,26 @@ postman.setGlobalVariable(
 
     //PARAMETER
     utils.expectParameter = (name, expected, callback) => {
-      pm.expect(name, "getParameter name argument").to.exist;
+      pm.expect(name, "expectParameter name argument").to.exist;
       pm.expect(utils.responseType, "responseType").to.exist;
       var value;
       var valueName = `${name} parameter`;
-      let parameters = _.get(utils.response, `${utils.responseType}.parameter`);
-      if (parameters !== undefined) {
-        let index = _.findIndex(parameters, { name: name });
-        if (index != -1) {
-          value = parameters[index].value;
-          valueName = `${name} parameter (${
-            utils.responseType
-          }.parameter[${index}].value)`;
+
+      if (utils.responseType === "HTTP") {
+        value = _.get(utils.response, `lines[0].${name}`);
+      } else {
+        let parameters = _.get(
+          utils.response,
+          `${utils.responseType}.parameter`
+        );
+        if (parameters !== undefined) {
+          let index = _.findIndex(parameters, { name: name });
+          if (index != -1) {
+            value = parameters[index].value;
+            valueName = `${name} parameter (${
+              utils.responseType
+            }.parameter[${index}].value)`;
+          }
         }
       }
       utils.expectValue(valueName, value, expected, callback);

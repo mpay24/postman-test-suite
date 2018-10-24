@@ -89,7 +89,7 @@ postman.setGlobalVariable(
         pm.test(`${name} matches: ${expected}`, () => {
           pm.expect(value).to.match(expected);
         });
-      } else if (!isNaN(expected)) {
+      } else if (typeof expected === "number") {
         pm.test(`${name} equals: ${expected}`, () => {
           pm.expect(Number(value)).to.equal(expected);
         });

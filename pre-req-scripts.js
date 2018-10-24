@@ -169,7 +169,8 @@ postman.setGlobalVariable(
     utils.expectSubResponse = (name, index, expected, callback) => {
       pm.expect(name, "expectSubResponse name argument").to.exist;
       pm.expect(utils.responseSubType, "responseSubType").to.exist;
-      var paramName = `${utils.responseSubType}.${name}`;
+      let normName = utils.responseType === "HTTP" ? name.toUpperCase() : name;
+      var paramName = `${utils.responseSubType}.${normName}`;
       let values = _.get(utils.response, utils.responseSubType);
       if (values instanceof Array) {
         if (index === undefined) {
@@ -177,7 +178,7 @@ postman.setGlobalVariable(
         }
         pm.expect(index, "index").to.be.at.least(1);
         pm.expect(index, "index").to.be.at.most(values.length);
-        paramName = `${utils.responseSubType}[${index - 1}].${name}`;
+        paramName = `${utils.responseSubType}[${index - 1}].${normName}`;
       }
       utils.expect(paramName, expected, callback);
     };

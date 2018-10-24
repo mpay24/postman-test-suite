@@ -237,7 +237,7 @@ postman.setGlobalVariable(
       utils.expectResponse("faultstring", expected);
     };
     utils.expectErrNo = expected => {
-      utils.expectResponse("errNo", String(expected));
+      utils.expectResponse("errNo", expected);
     };
     utils.expectErrText = expected => {
       utils.expectResponse("errText", expected);

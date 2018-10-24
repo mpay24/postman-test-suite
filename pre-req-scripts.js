@@ -72,7 +72,7 @@ postman.setGlobalVariable(
             let sum = Number(utils.response.SUM);
             pm.expect(sum, "Wrong SUM parameter").to.equal(expectedLen);
           } else {
-            let all = Number(utils.response.ALL);
+            let all = Number(utils.response.ALL | 1);
             pm.expect(all, "Wrong ALL parameter").to.equal(expectedLen);
           }
         } else {

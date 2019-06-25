@@ -262,6 +262,16 @@ postman.setGlobalVariable(
     utils.saveLocation = () => {
       utils.saveResponseParameter("location", "Location");
     };
+
+    //MISC
+    utils.saveRandom = (name,lower,upper,floating) => {
+      let value = _.random(lower,upper,floating);
+      pm.test(`Saving ${value} as ${name}`, () => {
+        pm.expect(value).to.exist;
+        pm.environment.set(name, value);
+      });
+    }
+
     return utils;
   } + "; loadUtils();"
 );

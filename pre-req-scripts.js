@@ -24,7 +24,18 @@ postman.setGlobalVariable(
     };
     utils.paramName = name => {
       if (utils.responseType === "HTTP") return name.toUpperCase();
+      if (utils.responseType === "XML") return name;
       return `${utils.responseType}.${name}`;
+    };
+    utils.parseXMLResponse = () => {
+      utils.expContent = "text/xml";
+      utils.responseType = "XML";
+      utils.response = xml2Json(pm.response.text());
+      pm.expect(utils.response, "Cannot parse the response to XML").to.exist;
+      let content = postman.getResponseHeader("Content-Type");
+      pm.expect(content, "Missing Content-Type header").to.exist;
+      pm.expect(content, "Wrong Content-Type").to.contain(utils.expContent);
+      pm.response.to.have.status(utils.expStatus, "Invalid http status");
     };
     utils.parseSOAPResponse = (resType, resSubType) => {
       utils.responseType =

@@ -27,9 +27,9 @@ postman.setGlobalVariable(
       if (utils.responseType === "XML") return name;
       return `${utils.responseType}.${name}`;
     };
-    utils.parseXMLResponse = () => {
+    utils.parseXMLResponse = (resType) => {
       utils.expContent = "text/xml";
-      utils.responseType = "XML";
+      utils.responseType = resType === undefined ? "XML" : resType;
       utils.response = xml2Json(pm.response.text());
       pm.expect(utils.response, "Cannot parse the response to XML").to.exist;
       let content = postman.getResponseHeader("Content-Type");

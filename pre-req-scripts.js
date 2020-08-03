@@ -84,6 +84,21 @@ postman.setGlobalVariable(
         pm.response.to.have.status(utils.expStatus, "Invalid http status");
       });
     };
+    utils.parseHTMLResponse = (contentType) => {
+      if (contentType == undefined) {
+        contentType = "text/html";
+      }
+      pm.test("Content-Type is correct", () => {
+        pm.response.to.have.header("Content-Type");
+        let content = postman.getResponseHeader("Content-Type");
+        pm.expect(content, "Missing Content-Type header").to.exist;
+        pm.expect(content, "Wrong Content-Type").to.contain(contentType);
+      });
+      pm.test("Parsing html page", () => {
+        utils.cherio = cheerio.load(pm.response.text());
+        pm.expect(utils.cherio).to.exist;
+      });
+    };
     utils.expectValue = (name, value, expected, callback) => {
       if (expected instanceof RegExp) {
         pm.test(`${name} matches: ${expected}`, () => {
@@ -217,7 +232,9 @@ postman.setGlobalVariable(
           `${utils.responseType}.parameter`
         );
         if (parameters !== undefined) {
-          let index = _.findIndex(parameters, { name: name });
+          let index = _.findIndex(parameters, {
+            name: name
+          });
           if (index != -1) {
             value = parameters[index].value;
             valueName = `${name} parameter (${
@@ -264,13 +281,18 @@ postman.setGlobalVariable(
     };
 
     //MISC
-    utils.saveRandom = (name,lower,upper,floating) => {
-      let value = _.random(lower,upper,floating);
-      pm.test(`Saving ${value} as ${name}`, () => {
+    utils.saveRandom = (name, lower, upper, floating) => {
+      let value = _.random(lower, upper, floating);
+      pm.test(`Saving random ${value} as ${name}`, () => {
         pm.expect(value).to.exist;
         pm.environment.set(name, value);
       });
-    }
+    };
+    utils.getHTML = (selector, context, root) => utils.cherio(selector, context, root);
+    utils.checkHTML = (name, expected, selector, context, root) => {
+      let value = utils.getHTML(selector, context, root).text();
+      utils.expectValue(name, value, expected);
+    };
 
     return utils;
   } + "; loadUtils();"

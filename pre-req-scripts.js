@@ -299,6 +299,13 @@ postman.setGlobalVariable(
         pm.environment.set(name, value);
       });
     };
+    utils.saveTimestamp = (name) => {
+      let value = new Date().toISOString();
+      pm.test(`Saving timestamp ${value} as ${name}`, () => {
+        pm.expect(value).to.exist;
+        pm.environment.set(name, value);
+      });
+    }
     utils.getHTML = (selector, context, root) => utils.cherio(selector, context, root);
     utils.checkHTML = (name, expected, selector, context, root) => {
       let value = utils.getHTML(selector, context, root).text();

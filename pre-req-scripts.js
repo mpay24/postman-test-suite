@@ -300,7 +300,8 @@ postman.setGlobalVariable(
       });
     };
     utils.saveTimestamp = (name) => {
-      let value = new Date().toISOString();
+      let isoDate = new Date().toISOString();
+      let value = isoDate.substr(0, isoDate.indexOf('.'));
       pm.test(`Saving timestamp ${value} as ${name}`, () => {
         pm.expect(value).to.exist;
         pm.environment.set(name, value);

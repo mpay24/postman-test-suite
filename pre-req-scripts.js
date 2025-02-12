@@ -37,6 +37,20 @@ postman.setGlobalVariable(
       pm.expect(content, "Wrong Content-Type").to.contain(utils.expContent);
       pm.response.to.have.status(utils.expStatus, "Invalid http status");
     };
+    utils.faultCheck = () => {
+      let result = false
+      pm.test("Check for Fault", () => {
+        let responseJSON = xml2Json(pm.response.text());
+        pm.expect(responseJSON, "Cannot parse the response to JSON").to.exist;
+        let soapEnvelope = responseJSON[`${utils.expNs}:Envelope`];
+        pm.expect(soapEnvelope, `${utils.expNs}:Envelope`).to.exist;
+        utils.response = soapEnvelope[`${utils.expNs}:Body`];
+        pm.expect(utils.response, `${utils.expNs}::Body`).to.exist;
+        let value = _.get(utils.response, `${utils.expNs}:Fault`);
+        result = (value != undefined)
+      });
+      return result
+    }
     utils.parseSOAPResponse = (resType, resSubType) => {
       utils.responseType =
         resType === undefined ? `${utils.expNs}:Fault` : resType;
